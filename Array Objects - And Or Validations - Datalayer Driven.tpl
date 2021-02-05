@@ -2,9 +2,15 @@
 
 {
   "displayName": "Array Objects - And Or Validations - Datalayer Driven",
-  "description": "Compare items in an array to see if the object in the array passes conditions we set, return either an array of matching objects or predefined truthy/falsy data.",
+  "description": "Compare items in an array to see if the object in the array passes conditions we set, return either an array of matching objects or predefined variables",
   "categories": ["UTILITY"],
-  "version": 1
+  "securityGroups": [],
+  "id": "cvt_temp_public_id",
+  "type": "MACRO",
+  "version": 1,
+  "containerContexts": [
+    "WEB"
+  ]
 }
 
 
@@ -378,7 +384,7 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "SELECT",
     "name": "returnOptions",
-    "displayName": "",
+    "displayName": "Defined the return options",
     "macrosInSelect": false,
     "selectItems": [
       {
@@ -436,11 +442,8 @@ ___TEMPLATE_PARAMETERS___
 
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
-const log = require('logToConsole');
-const JSON = require("JSON");
+//const log = require('logToConsole');
 const copyFromDataLayer = require("copyFromDataLayer");
-log('data =', data);
-
 let testing = false || data.testing;
 
 let currentArray;
@@ -455,7 +458,6 @@ if(data.targetEvents){
   let eventMap = data.targetEvents.map((i) => {
     return i.name;
   });
-  log("eventMap",eventMap);
 
   let event;
   if(data.testing){
@@ -463,7 +465,6 @@ if(data.targetEvents){
   } else {
     event = copyFromDataLayer("event");
   }
-  log("event",event);
 
   if(eventMap.indexOf(event) === -1){
     return undefined;
@@ -475,12 +476,9 @@ let endPoint;
 for(var l = 0; l < data.arrayTarget.length; l++){
   let lookupKey = data.arrayTarget[l].arrayEndpoint.split(".");
   arraysMapped = [];
-  // For each array end point, loop over and get the end
   if(l === 0){
     for(var lk = 0; lk < lookupKey.length; lk++){
         if(lk === 0){
-        // If this is the first item in the loop, and the first lookup key, then set the appropriate variables (endPoint)
-        // This section iterates up objects to find the first array
         if(data.testing){
           endPoint = data.dataLayer[lookupKey[lk]];
         } else {
@@ -490,8 +488,6 @@ for(var l = 0; l < data.arrayTarget.length; l++){
           }
         }
       } else {
-        // object iteration continues to find the first main array
-        log("endPoint ",l,lk,lookupKey[lk], endPoint);
         endPoint = endPoint[lookupKey[lk]];
       }
     }
@@ -585,7 +581,6 @@ const ruleComparisons = (rules,object) => {
     let rule = rules[i];
     let entry = object[rule.entry];
     let comparitor = rule.comparator;
-    log("compare this: ",entry," with this: ",comparitor);
     if ( RULE[rule.method](resolve(entry),resolve(comparitor)) ) {
       return true;
     }
@@ -611,7 +606,6 @@ for(var f = 0; f < currentArray.length; f++){
     if(data.returnOptions === "manual"){
       return data.returnIfTrue;
     } else if(data.returnOptions === "object"){
-      log("this object matches all conditions: ",comparisonObject);
       returnArray.push(comparisonObject);
     }
   }
@@ -619,7 +613,6 @@ for(var f = 0; f < currentArray.length; f++){
 if(data.returnOptions === "manual"){
   return data.returnIfFalse;
 } else if (data.returnOptions === "object"){
-  log("returnArray",returnArray);
   return returnArray;
 } else {
   return undefined;
@@ -629,24 +622,6 @@ if(data.returnOptions === "manual"){
 ___WEB_PERMISSIONS___
 
 [
-  {
-    "instance": {
-      "key": {
-        "publicId": "logging",
-        "versionId": "1"
-      },
-      "param": [
-        {
-          "key": "environments",
-          "value": {
-            "type": 1,
-            "string": "debug"
-          }
-        }
-      ]
-    },
-    "isRequired": true
-  },
   {
     "instance": {
       "key": {
@@ -779,172 +754,6 @@ ___WEB_PERMISSIONS___
 ___TESTS___
 
 scenarios:
-- name: True Test One Table
-  code: |-
-    const mockData = {
-      testing: true,
-      "returnOptions":"manual",
-      "targetEvents":[{"name":"fixed-odds-bets-placed"}],
-      "or_table_two":[{"entry":"sportSlug","method":"equals","comparator":"football"}],"or_table_one":[{"entry":"marketName","method":"equals","comparator":"Match Result"},{"entry":"marketName","method":"equals","comparator":"something"}],"returnIfTrue":"true","arrayTarget":[{"arrayEndpoint":"placedBets.bets"},{"arrayEndpoint":"selections"}],"returnIfFalse":"false","gtmEventId":1,
-      dataLayer: {
-        event: "fixed-odds-bets-placed",
-        placedBets:{  bets: [
-          {
-            selections: [
-              {
-                name: 'Wycombe Wanderers',
-                id: 73628401,
-                eventId: 869836,
-                marketName: 'Match Result',
-                marketId: '869836.null:20001.null',
-                sportName: 'Football ',
-                sportId: 2,
-                sportSlug: 'football',
-                tournamentId: 7470,
-                tournamentName: 'FA Cup',
-                numerator: 11,
-                denominator: 1,
-                decimalPrice: 12,
-                isSP: false,
-                dateStart: '2021-01-25T19:45:00.000Z',
-                teamHome: 'Wycombe Wanderers',
-                teamAway: 'Tottenham Hotspur',
-                source: 'Sportsbook',
-                isLive: false,
-                jockeyName: '',
-                stateOfPlay: ''
-              }
-            ],
-            betType: 'Single',
-            stake: 0.1,
-            estimatedReturns: 1.2,
-            isEachWay: false,
-            isFreeBet: false
-          },
-          {
-            selections: [
-              {
-                name: 'Wycombe Wanderers',
-                id: 73628401,
-                eventId: 869836,
-                marketName: 'Match Result',
-                marketId: '869836.null:20001.null',
-                sportName: 'Football ',
-                sportId: 2,
-                sportSlug: 'football',
-                tournamentId: 7470,
-                tournamentName: 'FA Cup',
-                numerator: 11,
-                denominator: 1,
-                decimalPrice: 12,
-                isSP: false,
-                dateStart: '2021-01-25T19:45:00.000Z',
-                teamHome: 'Wycombe Wanderers',
-                teamAway: 'Tottenham Hotspur',
-                source: 'Sportsbook',
-                isLive: false,
-                jockeyName: '',
-                stateOfPlay: ''
-              },
-              {
-                name: 'Liverpool',
-                id: 73107763,
-                eventId: 870058,
-                marketName: 'Match Result',
-                marketId: '870058.null:20001.null',
-                sportName: 'Football ',
-                sportId: 2,
-                sportSlug: 'football',
-                tournamentId: 633,
-                tournamentName: 'Premier League',
-                numerator: 5,
-                denominator: 4,
-                decimalPrice: 2.25,
-                isSP: false,
-                dateStart: '2021-01-28T20:00:00.000Z',
-                teamHome: 'Tottenham Hotspur',
-                teamAway: 'Liverpool',
-                source: 'Sportsbook',
-                isLive: false,
-                jockeyName: '',
-                stateOfPlay: ''
-              },
-              {
-                name: 'Athletic Bilbao',
-                id: 73274101,
-                eventId: 879157,
-                marketName: 'Match Result',
-                marketId: '879157.null:20001.null',
-                sportName: 'Football ',
-                sportId: 2,
-                sportSlug: 'football',
-                tournamentId: 10695,
-                tournamentName: 'Spanish Primera Division',
-                numerator: 5,
-                denominator: 4,
-                decimalPrice: 2.25,
-                isSP: false,
-                dateStart: '2021-01-25T20:00:00.000Z',
-                teamHome: 'Athletic Bilbao',
-                teamAway: 'Getafe',
-                source: 'Sportsbook',
-                isLive: false,
-                jockeyName: '',
-                stateOfPlay: ''
-              }
-            ]
-          }]
-         }
-                 }
-        };
-
-    // Call runCode to run the template's code.
-    let variableResult = runCode(mockData);
-
-    // Verify that the variable returns a result.
-    assertThat(variableResult).isEqualTo("true");
-- name: premier league tournamentName, football sportSlug
-  code: "const mockData = {\n  testing: true,\n  \"returnOptions\":\"manual\",\n \
-    \ \"targetEvents\":[{\"name\":\"fixed-odds-bets-placed\"}],\n  \"or_table_two\"\
-    :[{\"entry\":\"sportSlug\",\"method\":\"equals\",\"comparator\":\"football\"}],\"\
-    or_table_one\":[{\"entry\":\"tournamentName\",\"method\":\"equals\",\"comparator\"\
-    :\"Premier League\"}],\"returnIfTrue\":\"true\",\"arrayTarget\":[{\"arrayEndpoint\"\
-    :\"placedBets.bets\"},{\"arrayEndpoint\":\"selections\"}],\"returnIfFalse\":\"\
-    false\",\"gtmEventId\":1,\n  dataLayer: {\n  event: \"fixed-odds-bets-placed\"\
-    ,\n  placedBets:{  \n    bets: [\n      {\n        selections: [\n          {\n\
-    \            name: 'Tottenham Hotspur',\n            id: 75140641,\n         \
-    \   eventId: 890188,\n            marketName: 'Match Result',\n            marketId:\
-    \ '890188.null:20001.null',\n            sportName: 'Football ',\n           \
-    \ sportId: 2,\n            sportSlug: 'football',\n            tournamentId: 633,\n\
-    \            tournamentName: 'Premier League',\n            numerator: 11,\n \
-    \           denominator: 4,\n            decimalPrice: 3.75,\n            isSP:\
-    \ false,\n            dateStart: '2021-02-04T20:00:00.000Z',\n            teamHome:\
-    \ 'Tottenham Hotspur',\n            teamAway: 'Chelsea',\n            source:\
-    \ 'Sportsbook',\n            isLive: false,\n            jockeyName: '',\n   \
-    \         stateOfPlay: ''\n          },\n          {\n            name: 'Draw',\n\
-    \            id: 76062346,\n            eventId: 895705,\n            marketName:\
-    \ 'Match Result',\n            marketId: '895705.null:20001.null',\n         \
-    \   sportName: 'Football ',\n            sportId: 2,\n            sportSlug: 'football',\n\
-    \            tournamentId: 633,\n            tournamentName: 'Premier League',\n\
-    \            numerator: 13,\n            denominator: 5,\n            decimalPrice:\
-    \ 3.6,\n            isSP: false,\n            dateStart: '2021-02-06T12:30:00.000Z',\n\
-    \            teamHome: 'Aston Villa',\n            teamAway: 'Arsenal',\n    \
-    \        source: 'Sportsbook',\n            isLive: false,\n            jockeyName:\
-    \ '',\n            stateOfPlay: ''\n          },\n          {\n            name:\
-    \ 'Brighton & Hove Albion',\n            id: 76062604,\n            eventId: 895801,\n\
-    \            marketName: 'Match Result',\n            marketId: '895801.null:20001.null',\n\
-    \            sportName: 'Football ',\n            sportId: 2,\n            sportSlug:\
-    \ 'football',\n            tournamentId: 633,\n            tournamentName: 'Premier\
-    \ League',\n            numerator: 5,\n            denominator: 4,\n         \
-    \   decimalPrice: 2.25,\n            isSP: false,\n            dateStart: '2021-02-06T15:00:00.000Z',\n\
-    \            teamHome: 'Burnley',\n            teamAway: 'Brighton & Hove Albion',\n\
-    \            source: 'Sportsbook',\n            isLive: false,\n            jockeyName:\
-    \ '',\n            stateOfPlay: ''\n          }\n        ],\n        betType:\
-    \ 'Round_Robin',\n        stake: 0.1,\n        estimatedReturns: 0.93,\n     \
-    \   isEachWay: false,\n        isFreeBet: false\n      }\n    ]\n     }\n    \
-    \         }\n    };\n\n// Call runCode to run the template's code.\nlet variableResult\
-    \ = runCode(mockData);\n\n// Verify that the variable returns a result.\nassertThat(variableResult).isEqualTo(\"\
-    true\");"
 - name: Deep Array 2 Depth - True
   code: "const mockData = {\n  testing: true,\n  \"returnOptions\":\"manual\",\n \
     \ \"or_table_two\":[{\"entry\":\"name\",\"method\":\"equals\",\"comparator\":\"\
@@ -1503,17 +1312,195 @@ scenarios:
     \     }\n   ]  \n  }\n  \n};\n\n\n// Call runCode to run the template's code.\n\
     let variableResult = runCode(mockData);\n\n// Verify that the variable returns\
     \ a result.\nassertThat(variableResult).hasLength(1);"
+- name: Does Not Contain - object return length 1
+  code: "const mockData = {\n  testing: true,\n  \"returnOptions\":\"object\",\n \
+    \ \"or_table_one\":[{\"entry\":\"hobby\",\"method\":\"equals\",\"comparator\"\
+    :\"swimming\"},{\"entry\":\"hobby\",\"method\":\"equalsIgnoreCase\",\"comparator\"\
+    :\"waterpolo\"}],\n  \"or_table_two\":[{\"entry\":\"university\",\"method\":\"\
+    equalsIgnoreCase\",\"comparator\":\"manchester\"}],\n  \"or_table_three\":[{\"\
+    entry\":\"age\",\"method\":\"doesNotEqual\",\"comparator\":\"40\"}],\n  \"returnIfTrue\"\
+    :\"true\",\n  \"arrayTarget\":[\n   {\"arrayEndpoint\":\"arrayOne\"},\n   {\"\
+    arrayEndpoint\":\"arrayTwo\"}\n  ],\"returnIfFalse\":\"false\",\"gtmEventId\"\
+    :1,\n  dataLayer: {\n    arrayOne: [\n     {\n       arrayTwo: [\n        {name:\
+    \ \"Joe\", age: \"20\", hobby: \"gym\", university: \"Manchester\"}, \n      \
+    \  {name: \"Jim\", age: \"21\", hobby: \"crafts\", university: \"Manchester\"\
+    }\n       ],\n      objectTwo: false\n     },\n     {\n      arrayTwo: [\n   \
+    \    {name: \"Mary\",age: \"40\", hobby: \"swimming\", university: \"Manchester\"\
+    }, \n       {name: \"Josie\", age: \"24\", hobby: \"climbing\", university: \"\
+    Liverpool\"}\n      ],\n      objectTwo: true\n     },\n     {\n      arrayTwo:\
+    \ [\n       {name: \"Elizabeth\",age: \"19\", hobby: \"Pottery\", university:\
+    \ \"Liverpool\"}, \n       {name: \"Sandra\", age: \"32\", hobby: \"Waterpolo\"\
+    , university: \"Liverpool\"}\n      ],\n      objectTwo: true\n     },\n     {\n\
+    \      arrayTwo: [\n       {name: \"Angeline\",age: \"39\", hobby: \"Waterpolo\"\
+    , university: \"Manchester\"}, \n       {name: \"Aoife\", age: \"24\", hobby:\
+    \ \"climbing\", university: \"Liverpool\"}\n      ],\n      objectTwo: true\n\
+    \     }\n   ]  \n  }\n  \n};\n\n\n// Call runCode to run the template's code.\n\
+    let variableResult = runCode(mockData);\n\n// Verify that the variable returns\
+    \ a result.\nassertThat(variableResult).hasLength(1);"
+- name: Greater Than - object return length 0
+  code: "const mockData = {\n  testing: true,\n  \"returnOptions\":\"object\",\n \
+    \ \"or_table_one\":[{\"entry\":\"hobby\",\"method\":\"equals\",\"comparator\"\
+    :\"swimming\"},{\"entry\":\"hobby\",\"method\":\"equalsIgnoreCase\",\"comparator\"\
+    :\"waterpolo\"}],\n  \"or_table_two\":[{\"entry\":\"university\",\"method\":\"\
+    equalsIgnoreCase\",\"comparator\":\"manchester\"}],\n  \"or_table_three\":[{\"\
+    entry\":\"age\",\"method\":\"greaterThan\",\"comparator\":\"40\"}],\n  \"returnIfTrue\"\
+    :\"true\",\n  \"arrayTarget\":[\n   {\"arrayEndpoint\":\"arrayOne\"},\n   {\"\
+    arrayEndpoint\":\"arrayTwo\"}\n  ],\"returnIfFalse\":\"false\",\"gtmEventId\"\
+    :1,\n  dataLayer: {\n    arrayOne: [\n     {\n       arrayTwo: [\n        {name:\
+    \ \"Joe\", age: \"20\", hobby: \"gym\", university: \"Manchester\"}, \n      \
+    \  {name: \"Jim\", age: \"21\", hobby: \"crafts\", university: \"Manchester\"\
+    }\n       ],\n      objectTwo: false\n     },\n     {\n      arrayTwo: [\n   \
+    \    {name: \"Mary\",age: \"40\", hobby: \"swimming\", university: \"Manchester\"\
+    }, \n       {name: \"Josie\", age: \"24\", hobby: \"climbing\", university: \"\
+    Liverpool\"}\n      ],\n      objectTwo: true\n     },\n     {\n      arrayTwo:\
+    \ [\n       {name: \"Elizabeth\",age: \"19\", hobby: \"Pottery\", university:\
+    \ \"Liverpool\"}, \n       {name: \"Sandra\", age: \"32\", hobby: \"Waterpolo\"\
+    , university: \"Liverpool\"}\n      ],\n      objectTwo: true\n     },\n     {\n\
+    \      arrayTwo: [\n       {name: \"Angeline\",age: \"39\", hobby: \"Waterpolo\"\
+    , university: \"Manchester\"}, \n       {name: \"Aoife\", age: \"24\", hobby:\
+    \ \"climbing\", university: \"Liverpool\"}\n      ],\n      objectTwo: true\n\
+    \     }\n   ]  \n  }\n  \n};\n\n\n// Call runCode to run the template's code.\n\
+    let variableResult = runCode(mockData);\n\n// Verify that the variable returns\
+    \ a result.\nassertThat(variableResult).hasLength(0);"
+- name: Less Than - Object Return Length 1
+  code: "const mockData = {\n  testing: true,\n  \"returnOptions\":\"object\",\n \
+    \ \"or_table_one\":[{\"entry\":\"hobby\",\"method\":\"equals\",\"comparator\"\
+    :\"swimming\"},{\"entry\":\"hobby\",\"method\":\"equalsIgnoreCase\",\"comparator\"\
+    :\"waterpolo\"}],\n  \"or_table_two\":[{\"entry\":\"university\",\"method\":\"\
+    equalsIgnoreCase\",\"comparator\":\"manchester\"}],\n  \"or_table_three\":[{\"\
+    entry\":\"age\",\"method\":\"lessThan\",\"comparator\":\"40\"}],\n  \"returnIfTrue\"\
+    :\"true\",\n  \"arrayTarget\":[\n   {\"arrayEndpoint\":\"arrayOne\"},\n   {\"\
+    arrayEndpoint\":\"arrayTwo\"}\n  ],\"returnIfFalse\":\"false\",\"gtmEventId\"\
+    :1,\n  dataLayer: {\n    arrayOne: [\n     {\n       arrayTwo: [\n        {name:\
+    \ \"Joe\", age: \"20\", hobby: \"gym\", university: \"Manchester\"}, \n      \
+    \  {name: \"Jim\", age: \"21\", hobby: \"crafts\", university: \"Manchester\"\
+    }\n       ],\n      objectTwo: false\n     },\n     {\n      arrayTwo: [\n   \
+    \    {name: \"Mary\",age: \"40\", hobby: \"swimming\", university: \"Manchester\"\
+    }, \n       {name: \"Josie\", age: \"24\", hobby: \"climbing\", university: \"\
+    Liverpool\"}\n      ],\n      objectTwo: true\n     },\n     {\n      arrayTwo:\
+    \ [\n       {name: \"Elizabeth\",age: \"19\", hobby: \"Pottery\", university:\
+    \ \"Liverpool\"}, \n       {name: \"Sandra\", age: \"32\", hobby: \"Waterpolo\"\
+    , university: \"Liverpool\"}\n      ],\n      objectTwo: true\n     },\n     {\n\
+    \      arrayTwo: [\n       {name: \"Angeline\",age: \"39\", hobby: \"Waterpolo\"\
+    , university: \"Manchester\"}, \n       {name: \"Aoife\", age: \"24\", hobby:\
+    \ \"climbing\", university: \"Liverpool\"}\n      ],\n      objectTwo: true\n\
+    \     }\n   ]  \n  }\n  \n};\n\n\n// Call runCode to run the template's code.\n\
+    let variableResult = runCode(mockData);\n\n// Verify that the variable returns\
+    \ a result.\nassertThat(variableResult).hasLength(1);"
+- name: Greater Than Or Equal To - Object Return Length 1
+  code: "const mockData = {\n  testing: true,\n  \"returnOptions\":\"object\",\n \
+    \ \"or_table_one\":[{\"entry\":\"hobby\",\"method\":\"equals\",\"comparator\"\
+    :\"swimming\"},{\"entry\":\"hobby\",\"method\":\"equalsIgnoreCase\",\"comparator\"\
+    :\"waterpolo\"}],\n  \"or_table_two\":[{\"entry\":\"university\",\"method\":\"\
+    equalsIgnoreCase\",\"comparator\":\"manchester\"}],\n  \"or_table_three\":[{\"\
+    entry\":\"age\",\"method\":\"greaterThanOrEqualTo\",\"comparator\":\"40\"}],\n\
+    \  \"returnIfTrue\":\"true\",\n  \"arrayTarget\":[\n   {\"arrayEndpoint\":\"arrayOne\"\
+    },\n   {\"arrayEndpoint\":\"arrayTwo\"}\n  ],\"returnIfFalse\":\"false\",\"gtmEventId\"\
+    :1,\n  dataLayer: {\n    arrayOne: [\n     {\n       arrayTwo: [\n        {name:\
+    \ \"Joe\", age: \"20\", hobby: \"gym\", university: \"Manchester\"}, \n      \
+    \  {name: \"Jim\", age: \"21\", hobby: \"crafts\", university: \"Manchester\"\
+    }\n       ],\n      objectTwo: false\n     },\n     {\n      arrayTwo: [\n   \
+    \    {name: \"Mary\",age: \"40\", hobby: \"swimming\", university: \"Manchester\"\
+    }, \n       {name: \"Josie\", age: \"24\", hobby: \"climbing\", university: \"\
+    Liverpool\"}\n      ],\n      objectTwo: true\n     },\n     {\n      arrayTwo:\
+    \ [\n       {name: \"Elizabeth\",age: \"19\", hobby: \"Pottery\", university:\
+    \ \"Liverpool\"}, \n       {name: \"Sandra\", age: \"32\", hobby: \"Waterpolo\"\
+    , university: \"Liverpool\"}\n      ],\n      objectTwo: true\n     },\n     {\n\
+    \      arrayTwo: [\n       {name: \"Angeline\",age: \"39\", hobby: \"Waterpolo\"\
+    , university: \"Manchester\"}, \n       {name: \"Aoife\", age: \"24\", hobby:\
+    \ \"climbing\", university: \"Liverpool\"}\n      ],\n      objectTwo: true\n\
+    \     }\n   ]  \n  }\n  \n};\n\n\n// Call runCode to run the template's code.\n\
+    let variableResult = runCode(mockData);\n\n// Verify that the variable returns\
+    \ a result.\nassertThat(variableResult).hasLength(1);"
+- name: Less Than Or Equal To - Object Return Length 2
+  code: "const mockData = {\n  testing: true,\n  \"returnOptions\":\"object\",\n \
+    \ \"or_table_one\":[{\"entry\":\"hobby\",\"method\":\"equals\",\"comparator\"\
+    :\"swimming\"},{\"entry\":\"hobby\",\"method\":\"equalsIgnoreCase\",\"comparator\"\
+    :\"waterpolo\"}],\n  \"or_table_two\":[{\"entry\":\"university\",\"method\":\"\
+    equalsIgnoreCase\",\"comparator\":\"manchester\"}],\n  \"or_table_three\":[{\"\
+    entry\":\"age\",\"method\":\"lessThanOrEqualTo\",\"comparator\":\"40\"}],\n  \"\
+    returnIfTrue\":\"true\",\n  \"arrayTarget\":[\n   {\"arrayEndpoint\":\"arrayOne\"\
+    },\n   {\"arrayEndpoint\":\"arrayTwo\"}\n  ],\"returnIfFalse\":\"false\",\"gtmEventId\"\
+    :1,\n  dataLayer: {\n    arrayOne: [\n     {\n       arrayTwo: [\n        {name:\
+    \ \"Joe\", age: \"20\", hobby: \"gym\", university: \"Manchester\"}, \n      \
+    \  {name: \"Jim\", age: \"21\", hobby: \"crafts\", university: \"Manchester\"\
+    }\n       ],\n      objectTwo: false\n     },\n     {\n      arrayTwo: [\n   \
+    \    {name: \"Mary\",age: \"40\", hobby: \"swimming\", university: \"Manchester\"\
+    }, \n       {name: \"Josie\", age: \"24\", hobby: \"climbing\", university: \"\
+    Liverpool\"}\n      ],\n      objectTwo: true\n     },\n     {\n      arrayTwo:\
+    \ [\n       {name: \"Elizabeth\",age: \"19\", hobby: \"Pottery\", university:\
+    \ \"Liverpool\"}, \n       {name: \"Sandra\", age: \"32\", hobby: \"Waterpolo\"\
+    , university: \"Liverpool\"}\n      ],\n      objectTwo: true\n     },\n     {\n\
+    \      arrayTwo: [\n       {name: \"Angeline\",age: \"39\", hobby: \"Waterpolo\"\
+    , university: \"Manchester\"}, \n       {name: \"Aoife\", age: \"24\", hobby:\
+    \ \"climbing\", university: \"Liverpool\"}\n      ],\n      objectTwo: true\n\
+    \     }\n   ]  \n  }\n  \n};\n\n\n// Call runCode to run the template's code.\n\
+    let variableResult = runCode(mockData);\n\n// Verify that the variable returns\
+    \ a result.\nassertThat(variableResult).hasLength(2);"
+- name: Regex Match Multiple Ands - Object Return Length 1
+  code: "const mockData = {\n  testing: true,\n  \"returnOptions\":\"object\",\n \
+    \ \"or_table_one\":[{\"entry\":\"hobby\",\"method\":\"matchesRegExIgnoreCase\"\
+    ,\"comparator\":\"(swim).*?\"}],\n  \"or_table_two\":[{\"entry\":\"university\"\
+    ,\"method\":\"matchesRegExIgnoreCase\",\"comparator\":\"(man).*?\"}],\n  \"or_table_three\"\
+    :[{\"entry\":\"name\",\"method\":\"matchesRegExIgnoreCase\",\"comparator\":\"\
+    (mar).*?\"}],\n  \"returnIfTrue\":\"true\",\n  \"arrayTarget\":[\n   {\"arrayEndpoint\"\
+    :\"arrayOne\"},\n   {\"arrayEndpoint\":\"arrayTwo\"}\n  ],\"returnIfFalse\":\"\
+    false\",\"gtmEventId\":1,\n  dataLayer: {\n    arrayOne: [\n     {\n       arrayTwo:\
+    \ [\n        {name: \"Joe\", age: \"20\", hobby: \"gym\", university: \"Manchester\"\
+    }, \n        {name: \"Jim\", age: \"21\", hobby: \"crafts\", university: \"Manchester\"\
+    }\n       ],\n      objectTwo: false\n     },\n     {\n      arrayTwo: [\n   \
+    \    {name: \"Mary\",age: \"40\", hobby: \"swimming\", university: \"Manchester\"\
+    }, \n       {name: \"Josie\", age: \"24\", hobby: \"climbing\", university: \"\
+    Liverpool\"}\n      ],\n      objectTwo: true\n     },\n     {\n      arrayTwo:\
+    \ [\n       {name: \"Elizabeth\",age: \"19\", hobby: \"Pottery\", university:\
+    \ \"Liverpool\"}, \n       {name: \"Sandra\", age: \"32\", hobby: \"Waterpolo\"\
+    , university: \"Liverpool\"}\n      ],\n      objectTwo: true\n     },\n     {\n\
+    \      arrayTwo: [\n       {name: \"Angeline\",age: \"39\", hobby: \"Waterpolo\"\
+    , university: \"Manchester\"}, \n       {name: \"Aoife\", age: \"24\", hobby:\
+    \ \"climbing\", university: \"Liverpool\"}\n      ],\n      objectTwo: true\n\
+    \     }\n   ]  \n  }\n  \n};\n\n\n// Call runCode to run the template's code.\n\
+    let variableResult = runCode(mockData);\n\n// Verify that the variable returns\
+    \ a result.\nassertThat(variableResult).hasLength(1);"
+- name: Regex Not Match Multiple Ands - Object Return Length 4
+  code: "const mockData = {\n  testing: true,\n  \"returnOptions\":\"object\",\n \
+    \ \"or_table_one\":[{\"entry\":\"hobby\",\"method\":\"doesNotMatchRegExIgnoreCase\"\
+    ,\"comparator\":\"(swim).*?\"}],\n  \"or_table_two\":[{\"entry\":\"university\"\
+    ,\"method\":\"doesNotMatchRegExIgnoreCase\",\"comparator\":\"(man).*?\"}],\n \
+    \ \"or_table_three\":[{\"entry\":\"name\",\"method\":\"doesNotMatchRegExIgnoreCase\"\
+    ,\"comparator\":\"(mar).*?\"}],\n  \"returnIfTrue\":\"true\",\n  \"arrayTarget\"\
+    :[\n   {\"arrayEndpoint\":\"arrayOne\"},\n   {\"arrayEndpoint\":\"arrayTwo\"}\n\
+    \  ],\"returnIfFalse\":\"false\",\"gtmEventId\":1,\n  dataLayer: {\n    arrayOne:\
+    \ [\n     {\n       arrayTwo: [\n        {name: \"Joe\", age: \"20\", hobby: \"\
+    gym\", university: \"Manchester\"}, \n        {name: \"Jim\", age: \"21\", hobby:\
+    \ \"crafts\", university: \"Manchester\"}\n       ],\n      objectTwo: false\n\
+    \     },\n     {\n      arrayTwo: [\n       {name: \"Mary\",age: \"40\", hobby:\
+    \ \"swimming\", university: \"Manchester\"}, \n       {name: \"Josie\", age: \"\
+    24\", hobby: \"climbing\", university: \"Liverpool\"}\n      ],\n      objectTwo:\
+    \ true\n     },\n     {\n      arrayTwo: [\n       {name: \"Elizabeth\",age: \"\
+    19\", hobby: \"Pottery\", university: \"Liverpool\"}, \n       {name: \"Sandra\"\
+    , age: \"32\", hobby: \"Waterpolo\", university: \"Liverpool\"}\n      ],\n  \
+    \    objectTwo: true\n     },\n     {\n      arrayTwo: [\n       {name: \"Angeline\"\
+    ,age: \"39\", hobby: \"Waterpolo\", university: \"Manchester\"}, \n       {name:\
+    \ \"Aoife\", age: \"24\", hobby: \"climbing\", university: \"Liverpool\"}\n  \
+    \    ],\n      objectTwo: true\n     }\n   ]  \n  }\n  \n};\n\n\n// Call runCode\
+    \ to run the template's code.\nlet variableResult = runCode(mockData);\n\n// Verify\
+    \ that the variable returns a result.\nassertThat(variableResult).hasLength(4);"
 
 
 ___NOTES___
 
-/*******************/
+/*** SUBLIMETRIX ***/
 Version: 1.0.0
-Author: AsomerN
-Date: 2021.02.05
+Author: Sublimetrix
+Date: 2019.10.09
 /*******************/
 
 Change Log:
 1.0.0: Initial Version
+1.1.0: Default value
+1.1.1: Fix boolean issue + remove log requirement
+1.1.2: Optimization
+1.2.0: Name change
+1.2.1: Fix on "contains" & "does not contains" comparators
 
 
