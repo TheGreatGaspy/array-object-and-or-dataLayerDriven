@@ -1,0 +1,5 @@
+homepage: "https://github.com/gtm-templates-AndySN"
+documentation: "https://github.com/gtm-templates-AndySN/array-object-and-or-dataLayerDriven/blob/main/README.md"
+versions:
+  - sha: 779ac608df5ba303d1ab247c20c1b6fed232c6c5
+    changeNotes: Added .tpl

@@ -3,13 +3,8 @@
 {
   "displayName": "Array Objects - And Or Validations - Datalayer Driven",
   "description": "Compare items in an array to see if the object in the array passes conditions we set, return either an array of matching objects or predefined truthy/falsy data.",
-  "securityGroups": [],
-  "id": "cvt_temp_public_id",
-  "type": "MACRO",
-  "version": 1,
-  "containerContexts": [
-    "WEB"
-  ]
+  "categories": ["UTILITY"],
+  "version": 1
 }
 
 
