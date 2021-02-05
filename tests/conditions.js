@@ -1,0 +1,69 @@
+var conditions = [{
+  "entry": "",
+  "method": "equals",
+  "comparator": ""
+}, {
+  "entry": "",
+  "method": "contains",
+  "comparator": ""
+}, {
+  "entry": "",
+  "method": "startsWith",
+  "comparator": ""
+}, {
+  "entry": "",
+  "method": "endsWith",
+  "comparator": ""
+}, {
+  "entry": "",
+  "method": "matchesRegEx",
+  "comparator": ""
+}, {
+  "entry": "",
+  "method": "matchesRegExIgnoreCase",
+  "comparator": ""
+}, {
+  "entry": "",
+  "method": "doesNotEqual",
+  "comparator": ""
+}, {
+  "entry": "",
+  "method": "doesNotContain",
+  "comparator": ""
+}, {
+  "entry": "",
+  "method": "doesNotStartWith",
+  "comparator": ""
+}, {
+  "entry": "",
+  "method": "doesNotEndWith",
+  "comparator": ""
+}, {
+  "entry": "",
+  "method": "doesNotMatchRegEx",
+  "comparator": ""
+}, {
+  "entry": "",
+  "method": "doesNotMatchRegExIgnoreCase",
+  "comparator": ""
+}, {
+  "entry": "",
+  "method": "lessThan",
+  "comparator": ""
+}, {
+  "entry": "",
+  "method": "lessThanOrEqualTo",
+  "comparator": ""
+}, {
+  "entry": "",
+  "method": "greaterThan",
+  "comparator": ""
+}, {
+  "entry": "",
+  "method": "greaterThanOrEqualTo",
+  "comparator": ""
+}, {
+  "entry": "",
+  "method": "equalsIgnoreCase",
+  "comparator": ""
+}]
