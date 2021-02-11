@@ -1386,18 +1386,6 @@ scenarios:
 
 ___NOTES___
 
-/*** SUBLIMETRIX ***/
-Version: 1.0.0
-Author: Sublimetrix
-Date: 2019.10.09
-/*******************/
-
-Change Log:
-1.0.0: Initial Version
-1.1.0: Default value
-1.1.1: Fix boolean issue + remove log requirement
-1.1.2: Optimization
-1.2.0: Name change
-1.2.1: Fix on "contains" & "does not contains" comparators
+Created on 2021/02/05 by Andrew Somerharju Neale
 
 
