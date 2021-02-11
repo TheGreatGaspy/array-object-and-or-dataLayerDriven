@@ -1,5 +1,9 @@
 homepage: "https://github.com/gtm-templates-AndySN"
 documentation: "https://github.com/gtm-templates-AndySN/array-object-and-or-dataLayerDriven/blob/main/README.md"
 versions:
+  # Latest version
+  - sha: 9f257f422a74c93993e2ab55ed1cd8c641dac6bb
+    changeNotes: Version 1.4 Commit
+  # Older versions
   - sha: c1d1c4418bd6157db721bcb765b5b55b5bb94adc
     changeNotes: Version 1.3 Commit
